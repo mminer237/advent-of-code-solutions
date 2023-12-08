@@ -24,18 +24,27 @@ function GetCardValue {
 	$occurances = (@($cards | Sort-Object -Unique | % {
 		$card = $_;
 		,@($card, ($cards | Where-Object { $_ -eq $card }).count)
-	}) | Sort-Object -Descending {$_[1]})
-	$score = (13 - $ranks.indexOf($occurances[0][0])) * $occurances[0][1] * $occurances[0][1]
-	if ($occurances[0][1] -eq 3 -and $occurances[1][1] -eq 2) {
-		$score += (13 - $ranks.indexOf($occurances[1][0])) * $occurances[1][1]
+	}))
+	$occurances = $occurances.length -gt 1 ? ($occurances  | Sort-Object -Descending {$_[1]}) : $occurances
+	$score = $occurances[0][1] * 16000000
+	if (
+		($occurances[0][1] -eq 3 -or $occurances[0][1] -eq 2) -and
+		$occurances[1][1] -eq 2
+	) {
+		$score += 8000000
 	}
-	// TODO: Handle ties
+	for ($i = 0; $i -lt $cards.length; $i++) {
+		$score += ($ranks.length - $ranks.indexOf($cards[$i]) - 1) *
+			[Math]::Pow($ranks.length + 1, ($cards.length - $i))
+	}
 	$score
 }
 
-Get-Content -Path 'input.txt' |
+$rankedCards = Get-Content -Path 'input.txt' |
 	% { ,@($_ -split " ") } |
-#	Sort-Object { GetCardValue($_[0].toCharArray()) }
-	Sort-Object { GetCardValue($_[0].toCharArray()) } |
-	% { "$_  $(GetCardValue($_[0].toCharArray()))" }
-
+	Sort-Object { GetCardValue($_[0].toCharArray()) }
+$sum = 0
+for ($i = 0; $i -lt $rankedCards.length; $i++) {
+	$sum += [int]($rankedCards[$i][1]) * ($i + 1)
+}
+$sum
