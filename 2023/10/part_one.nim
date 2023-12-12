@@ -57,13 +57,13 @@ proc checkTile(x: int, y: int, fromDirection: uint8, tilesVisited: int): uint8 =
         echo "The farthest distance was: ", int(ceil((tilesVisited + 1) / 2))
         quit(0)
     else:
-        echo "Checking tile ", x, ", ", y, " (", map[y][x], ") from ", 
-            case fromDirection:
-                of north: "north"
-                of east: "east"
-                of south: "south"
-                of west: "west"
-                else: "unknown"
+        # echo "Checking tile ", x, ", ", y, " (", map[y][x], ") from ", 
+        #     case fromDirection:
+        #         of north: "north"
+        #         of east: "east"
+        #         of south: "south"
+        #         of west: "west"
+        #         else: "unknown"
         return
             if bitsliced(newTile(map[y][x]), firstEndSlice) == fromDirection:
                 bitsliced(newTile(map[y][x]), secondEndSlice)
@@ -91,7 +91,7 @@ for (x, y, fromDirection) in starts:
     var fromDirection = fromDirection
     var toDirection = invertDirection(fromDirection)
     var tilesVisited = 0
-    while fromDirection != 0:
+    while toDirection != 0:
         toDirection = checkTile(x, y, fromDirection, tilesVisited)
         x = x + int(bitsliced(toDirection, xSlice)) - 1
         y = y + int(bitand(toDirection, yAxisMask)) - 1
