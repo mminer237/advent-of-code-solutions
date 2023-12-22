@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 $sum = 0;
 $handle = fopen("input.txt", "r");
-$columns = array_fill(0, strlen(fgets($handle)), 0);
+$columns = array_fill(0, strlen(fgets($handle)) - 1, 0);
 rewind($handle);
 $lines = 0;
 $rocks = 0;
